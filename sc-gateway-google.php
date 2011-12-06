@@ -60,17 +60,17 @@ class SC_Gateway_Google
 	
 	static function connect()
 	{
-		$openid = new LightOpenID;
-		$openid->identity = 'https://www.google.com/accounts/o8/id';
-		$openid->required = array('namePerson/first', 'namePerson/last', 'contact/email');
-		$openid->returnUrl = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=google&call=callback';
+		$openid             = new LightOpenID;
+		$openid->identity   = 'https://www.google.com/accounts/o8/id';
+		$openid->required   = array('namePerson/first', 'namePerson/last', 'contact/email');
+		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=google&call=callback';
 		header('Location: ' . $openid->authUrl());
 	}
 	
 	static function callback()
 	{
-		$openid 			= new LightOpenID;
-		$openid->returnUrl 	= SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=google&call=callback';
+		$openid             = new LightOpenID;
+		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=google&call=callback';
 		
 		try
 		{
@@ -86,26 +86,27 @@ class SC_Gateway_Google
 			return;
 		}
 		
-		$google_id 	= $openid->identity;
+		$google_id  = $openid->identity;
 		$attributes = $openid->getAttributes();
-		$email 		= $attributes['contact/email'];
-		$first_name 	= $attributes['namePerson/first'];
-		$last_name 	= $attributes['namePerson/last'];
-		$signature 	= SC_Utils::generate_signature($google_id);
+		$email      = $attributes['contact/email'];
+		$first_name  = $attributes['namePerson/first'];
+		$last_name  = $attributes['namePerson/last'];
+		$signature  = SC_Utils::generate_signature($google_id);
 		
 		?>
 		<html>
 		<head>
 		<script>
 		function init() {
-		  window.opener.wp_social_connect({'action' : 'social_connect', 'social_connect_provider' : 'google', 
-			'social_connect_openid_identity' : '<?php echo $google_id ?>',
-			'social_connect_signature' : '<?php echo $signature ?>',
-			'social_connect_email' : '<?php echo $email ?>',
-			'social_connect_first_name' : '<?php echo $first_name ?>',
-			'social_connect_last_name' : '<?php echo $last_name ?>'});
-			
-		  window.close();
+			window.opener.wp_social_connect({
+				'action' : 'social_connect', 'social_connect_provider' : 'google', 
+				'social_connect_openid_identity' : '<?php echo $google_id ?>',
+				'social_connect_signature' : '<?php echo $signature ?>',
+				'social_connect_email' : '<?php echo $email ?>',
+				'social_connect_first_name' : '<?php echo $first_name ?>',
+				'social_connect_last_name' : '<?php echo $last_name ?>'
+			});
+			window.close();
 		}
 		</script>
 		</head>
@@ -117,20 +118,20 @@ class SC_Gateway_Google
 	
 	static function process_login()
 	{
-		$redirect_to 			= SC_Utils::redirect_to();
-		$provider_identity 		= $_REQUEST[ 'social_connect_openid_identity' ];
-		$provided_signature 	= $_REQUEST[ 'social_connect_signature' ];
+		$redirect_to            = SC_Utils::redirect_to();
+		$provider_identity      = $_REQUEST[ 'social_connect_openid_identity' ];
+		$provided_signature     = $_REQUEST[ 'social_connect_signature' ];
 		
 		SC_Utils::verify_signature( $provider_identity, $provided_signature, $redirect_to );
 		
 		return (object) array(
 			'provider_identity' => $provider_identity,
-			'email' 			=> $_REQUEST[ 'social_connect_email' ],
-			'first_name' 		=> $_REQUEST[ 'social_connect_first_name' ],
-			'last_name' 		=> $_REQUEST[ 'social_connect_last_name' ],
-			'profile_url'		=> '',
-			'name' 				=> $_REQUEST[ 'social_connect_first_name' ] . ' ' . $_REQUEST[ 'social_connect_last_name' ],
-			'user_login' 		=> strtolower($_REQUEST[ 'social_connect_first_name' ] . $_REQUEST[ 'social_connect_last_name' ])
+			'email'             => $_REQUEST[ 'social_connect_email' ],
+			'first_name'         => $_REQUEST[ 'social_connect_first_name' ],
+			'last_name'         => $_REQUEST[ 'social_connect_last_name' ],
+			'profile_url'        => '',
+			'name'              => $_REQUEST[ 'social_connect_first_name' ] . ' ' . $_REQUEST[ 'social_connect_last_name' ],
+			'user_login'        => strtolower($_REQUEST[ 'social_connect_first_name' ] . $_REQUEST[ 'social_connect_last_name' ])
 		);
 	}
 	
