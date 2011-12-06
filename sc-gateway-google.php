@@ -89,7 +89,7 @@ class SC_Gateway_Google
 		$google_id  = $openid->identity;
 		$attributes = $openid->getAttributes();
 		$email      = $attributes['contact/email'];
-		$first_name  = $attributes['namePerson/first'];
+		$first_name = $attributes['namePerson/first'];
 		$last_name  = $attributes['namePerson/last'];
 		$signature  = SC_Utils::generate_signature($google_id);
 		
@@ -127,9 +127,9 @@ class SC_Gateway_Google
 		return (object) array(
 			'provider_identity' => $provider_identity,
 			'email'             => $_REQUEST[ 'social_connect_email' ],
-			'first_name'         => $_REQUEST[ 'social_connect_first_name' ],
+			'first_name'        => $_REQUEST[ 'social_connect_first_name' ],
 			'last_name'         => $_REQUEST[ 'social_connect_last_name' ],
-			'profile_url'        => '',
+			'profile_url'       => '',
 			'name'              => $_REQUEST[ 'social_connect_first_name' ] . ' ' . $_REQUEST[ 'social_connect_last_name' ],
 			'user_login'        => strtolower($_REQUEST[ 'social_connect_first_name' ] . $_REQUEST[ 'social_connect_last_name' ])
 		);
