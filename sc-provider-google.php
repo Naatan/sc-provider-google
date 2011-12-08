@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: Social Connect - Google Gateway
+Plugin Name: Social Connect - Google Provider
 Plugin URI: http://wordpress.org/extend/plugins/social-connect/
 Description: Allows you to login / register with Google - REQUIRES Social Connect plugin
 Version: 0.10
@@ -12,14 +12,14 @@ License: GPL2
 
 require_once dirname(__FILE__) . '/openid.php';
 
-class SC_Gateway_Google 
+class SC_Provider_Google 
 {
 	
 	protected static $calls = array('connect','callback');
 	
 	static function init()
 	{
-		add_action('social_connect_button_list',array('SC_Gateway_Google','render_button'));
+		add_action('social_connect_button_list',array('SC_Provider_Google','render_button'));
 	}
 	
 	static function call()
@@ -29,7 +29,7 @@ class SC_Gateway_Google
 			return;
 		}
 		
-		call_user_func(array('SC_Gateway_Google', $_GET['call']));
+		call_user_func(array('SC_Provider_Google', $_GET['call']));
 	}
 	
 	static function render_button()
@@ -38,7 +38,7 @@ class SC_Gateway_Google
 		?>
 		<a href="javascript:void(0);" title="Google" class="social_connect_login_google"><img alt="Google" src="<?php echo $image_url ?>" /></a>
 		<div id="social_connect_google_auth" style="display: none;">
-			<input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/call.php?call=connect&gateway=google' ); ?>" />
+			<input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/call.php?call=connect&provider=google' ); ?>" />
 		</div>
 		
 		<script type="text/javascript">
@@ -63,14 +63,14 @@ class SC_Gateway_Google
 		$openid             = new LightOpenID;
 		$openid->identity   = 'https://www.google.com/accounts/o8/id';
 		$openid->required   = array('namePerson/first', 'namePerson/last', 'contact/email');
-		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=google&call=callback';
+		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?provider=google&call=callback';
 		header('Location: ' . $openid->authUrl());
 	}
 	
 	static function callback()
 	{
 		$openid             = new LightOpenID;
-		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?gateway=google&call=callback';
+		$openid->returnUrl  = SOCIAL_CONNECT_PLUGIN_URL . '/call.php?provider=google&call=callback';
 		
 		try
 		{
@@ -137,4 +137,4 @@ class SC_Gateway_Google
 	
 }
 
-SC_Gateway_Google::init();
+SC_Provider_Google::init();
